@@ -8,8 +8,7 @@ for flag in "$@"; do
         *r*)
             FLAGS="${FLAGS} --repo-update";;&
         *c*)
-            podclean
-            echo 
+            podclean && echo
             FLAGS="${FLAGS} --clean-install";;&
         *v*)
             FLAGS="${FLAGS} --verbose";;&
