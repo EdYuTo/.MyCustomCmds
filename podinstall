@@ -7,7 +7,7 @@ HELP="Usage: $(basename $0) [OPTIONS]
 
 Options:
     [ -r ], repo-update
-    [ -c ], clean-install
+    [ -c ], clean-install and podclean
     [ -v ], verbose
     [ -i ], run for intel (run with arch -x86_64)
     [ -h ], help
