@@ -1,20 +1,30 @@
-#!/opt/homebrew/bin/bash
+#!/bin/bash
 
 FLAGS=""
 INTEL_BUILD=""
 
-for flag in "$@"; do
-    case $flag in
-        *r*)
-            FLAGS="${FLAGS} --repo-update";;&
-        *c*)
-            podclean
-            echo 
-            FLAGS="${FLAGS} --clean-install";;&
-        *v*)
-            FLAGS="${FLAGS} --verbose";;&
-        *i*)
+HELP="Usage: $(basename $0) [OPTIONS]
+Options:
+    [ -r ], repo-update
+    [ -c ], clean-install
+    [ -v ], verbose
+    [ -i ], run for intel (run with arch -x86_64)
+    [ -h ], help"
+
+while getopts "rcvih" opt; do
+    case "$opt" in
+        r)
+            FLAGS="${FLAGS} --repo-update";;
+        c)
+            podclean && echo 
+            FLAGS="${FLAGS} --clean-install";;
+        v)
+            FLAGS="${FLAGS} --verbose";;
+        i)
             INTEL_BUILD="arch -x86_64";;
+        *|h)
+            echo "$HELP"
+            exit 1;;
     esac
 done
 
