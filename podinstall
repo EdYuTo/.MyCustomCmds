@@ -2,14 +2,13 @@
 
 FLAGS=""
 INTEL_BUILD=""
-SHOULD_CLEAN=""
 
 for flag in "$@"; do
     if [[ $flag == *"r"* ]]; then
         FLAGS="${FLAGS} --repo-update"
     fi
     if [[ $flag == *"c"* ]]; then
-        SHOULD_CLEAN=1
+        podclean && echo
         FLAGS="${FLAGS} --clean-install"
     fi
     if [[ $flag == *"v"* ]]; then
@@ -19,11 +18,6 @@ for flag in "$@"; do
         INTEL_BUILD="arch -x86_64"
     fi
 done
-
-if [[ $SHOULD_CLEAN -eq 1 ]]; then
-    podclean
-    echo 
-fi
 
 set -x
 
