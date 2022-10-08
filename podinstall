@@ -1,29 +1,23 @@
-#!/bin/bash
+#!/opt/homebrew/bin/bash
 
 FLAGS=""
 INTEL_BUILD=""
-SHOULD_CLEAN=""
 
 for flag in "$@"; do
-    if [[ $flag == *"r"* ]]; then
-        FLAGS="${FLAGS} --repo-update"
-    fi
-    if [[ $flag == *"c"* ]]; then
-        SHOULD_CLEAN=1
-        FLAGS="${FLAGS} --clean-install"
-    fi
-    if [[ $flag == *"v"* ]]; then
-        FLAGS="${FLAGS} --verbose"
-    fi
-    if [[ $flag == *"i"* ]]; then
-        INTEL_BUILD="arch -x86_64"
-    fi
+    echo $flag
+    case $flag in
+        *r*)
+            FLAGS="${FLAGS} --repo-update";;&
+        *c*)
+            podclean
+            echo 
+            FLAGS="${FLAGS} --clean-install";;&
+        *v*)
+            FLAGS="${FLAGS} --verbose";;&
+        *i*)
+            INTEL_BUILD="arch -x86_64";;
+    esac
 done
-
-if [[ $SHOULD_CLEAN -eq 1 ]]; then
-    podclean
-    echo 
-fi
 
 set -x
 
