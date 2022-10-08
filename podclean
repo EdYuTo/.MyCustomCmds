@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -x
+
+rm -rf Pods/ Podfile.lock && pod deintegrate
