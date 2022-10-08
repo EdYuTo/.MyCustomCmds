@@ -4,7 +4,6 @@ FLAGS=""
 INTEL_BUILD=""
 
 for flag in "$@"; do
-    echo $flag
     case $flag in
         *r*)
             FLAGS="${FLAGS} --repo-update";;&
