@@ -4,12 +4,16 @@ FLAGS=""
 INTEL_BUILD=""
 
 HELP="Usage: $(basename $0) [OPTIONS]
+
 Options:
     [ -r ], repo-update
     [ -c ], clean-install
     [ -v ], verbose
     [ -i ], run for intel (run with arch -x86_64)
-    [ -h ], help"
+    [ -h ], help
+    
+Ex: $(basename $0) -ir will execute:
+arch -x86_64 pod install --repo-update"
 
 while getopts "rcvih" opt; do
     case "$opt" in
