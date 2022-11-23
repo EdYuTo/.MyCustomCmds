@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Used to fix "virtual filesystem overlay file all-product-headers.yaml not found" error
+
+# Use the command `image list` with a break point and lldb
+for arg in "$@"; do
+    mdfind -0 "com_apple_xcode_dsym_uuids == $arg" | xargs -0 rm -rf --
+done
+
+rm -rf ~/Library/Developer/Xcode/DerivedData
