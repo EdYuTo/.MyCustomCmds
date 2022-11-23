@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+	echo "Usage: $0 [filename].[extension]"
+else
+	echo "Recording... press CTRL+C to stop"
+  # TODO: Add cutom path from input
+	(cd ~/Desktop/_recordings && xcrun simctl io booted recordVideo "$1")
+fi
