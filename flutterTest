@@ -1,0 +1,33 @@
+#!/bin/bash
+
+HELP="Usage: $(basename $0) [OPTIONS]
+
+Options:
+    [ -c ], generate coverage
+    [ -l ], run lcov to generate html report
+    [ -o ], open report
+
+"
+
+while getopts "clo" opt; do
+    case "$opt" in
+        c)
+            FLAGS="${FLAGS} --coverage";;
+        l)
+            RUN_LCOV=1;;
+        o)
+            OPEN_LCOV=1;;
+        *|h)
+            echo "$HELP"
+            exit 1;;
+    esac
+done
+
+flutter test ${FLAGS}
+
+if [ $RUN_LCOV ]; then
+    genhtml coverage/lcov.info -o coverage/html
+fi
+if [ $OPEN_LCOV ]; then
+    open coverage/html/index.html
+fi
