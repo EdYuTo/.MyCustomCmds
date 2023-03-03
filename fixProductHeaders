@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Used to fix "virtual filesystem overlay file all-product-headers.yaml not found" error
+# Check https://andresalla.com/en/fixing-virtual-filesystem-overlay-file-all-product-headers-yaml-not-found-error/
 
 # Use the command `image list` with a break point and lldb
 for arg in "$@"; do
