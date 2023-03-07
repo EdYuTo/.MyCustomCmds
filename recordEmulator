@@ -1,9 +1,24 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-	echo "Usage: $0 [filename].[extension]"
-else
-	echo "Wait for recording to start... press CTRL+C to stop"
-  # TODO: Add cutom path from input
-	(cd ~/Desktop/_recordings && xcrun simctl io booted recordVideo "$1")
+	echo "$HELP"
 fi
+
+HELP="Usage: $0 [filename].[extension] [ -p PATH ]"
+
+while getopts "p" opt; do
+    case "$opt" in
+        p)
+            PATH=${OPTARG};;
+        *|h)
+            echo "$HELP"
+            exit 1;;
+    esac
+done
+
+if [ -z "${HELP}" ]; then
+	mkdir -p $PATH && cd $PATH
+fi
+
+echo "Wait for recording to start... press CTRL+C to stop"
+xcrun simctl io booted recordVideo "$1"
