@@ -1,16 +1,17 @@
 #!/bin/bash
 
+HELP="Usage: $(basename $0) [filename].[extension] [ -p PATH ]"
+
 if [ -z "$1" ]; then
 	echo "$HELP"
+    exit 1
 fi
-
-HELP="Usage: $0 [filename].[extension] [ -p PATH ]"
 
 while getopts "p" opt; do
     case "$opt" in
         p)
             PATH=${OPTARG};;
-        *|h)
+        *)
             echo "$HELP"
             exit 1;;
     esac
