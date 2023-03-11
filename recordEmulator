@@ -7,18 +7,21 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-while getopts "p" opt; do
+while getopts "p:" opt ${@:2}; do
     case "$opt" in
         p)
-            PATH=${OPTARG};;
+            SAVE_DIR=${OPTARG};;
         *)
             echo "$HELP"
             exit 1;;
     esac
 done
 
-if [ -z "${HELP}" ]; then
-	mkdir -p $PATH && cd $PATH
+if [ -z "${SAVE_DIR}" ]; then
+    echo "File will be saved under ${PWD}/${1}"
+else
+    echo "File will be saved under ${SAVE_DIR}/${1}"
+	mkdir -p $SAVE_DIR && cd $SAVE_DIR
 fi
 
 echo "Wait for recording to start... press CTRL+C to stop"
