@@ -1,6 +1,8 @@
 #!/bin/bash
 
 HELP="Usage: $(basename $0) [filename].[extension] [ -p PATH ]"
+CURRENT_DIR="${PWD}"
+SAVE_DIR="${CURRENT_DIR}"
 
 if [ -z "$1" ]; then
 	echo "$HELP"
@@ -17,11 +19,9 @@ while getopts "p:" opt ${@:2}; do
     esac
 done
 
-if [ -z "${SAVE_DIR}" ]; then
-    echo "File will be saved under ${PWD}/${1}"
-else
-    echo "File will be saved under ${SAVE_DIR}/${1}"
-	mkdir -p $SAVE_DIR && cd $SAVE_DIR
+echo "File will be saved under ${SAVE_DIR}/${1}"
+if [ $SAVE_DIR != $CURRENT_DIR ]; then
+    mkdir -p $SAVE_DIR && cd $SAVE_DIR
 fi
 
 echo "Wait for recording to start... press CTRL+C to stop"
