@@ -1,13 +1,14 @@
 #!/bin/bash
 
 HELP="Usage: $(basename $0) [FILE_NAME].[FILE_EXT] [ -p SAVE_DIR ] [ -d SIM_NAME ]
+
     [FILE_NAME], filename
     [FILE_EXT], file extension: can be either MP4 or MOV
     [SAVE_DIR], path to save generated file, current dir if empty
     [SIM_NAME], simulator name or UUID
 
-    List of available devices:
-`xcrun simctl list devices | grep Booted`
+    List of available devices and UUIDs:
+$(xcrun simctl list devices | sed -ne 's/^[ \t]*\(.*\) (Booted)/    * \1/p')
 "
 
 if [ -z "$1" ]; then
