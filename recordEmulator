@@ -1,28 +1,56 @@
 #!/bin/bash
 
-HELP="Usage: $(basename $0) [filename].[extension] [ -p PATH ]"
-CURRENT_DIR="${PWD}"
-SAVE_DIR="${CURRENT_DIR}"
+HELP="Usage: $(basename $0) [FILE_NAME].[FILE_EXT] [ -p SAVE_DIR ]
+    [FILE_NAME], filename
+    [FILE_EXT], file extension: can be either MP4 or MOV
+    [SAVE_DIR], path to save generated file, current dir if empty
+"
+SAVE_DIR="$PWD"
 
 if [ -z "$1" ]; then
 	echo "$HELP"
     exit 1
 fi
 
-while getopts "p:" opt ${@:2}; do
+FILE_NAME="${1/.*/}"
+FILE_EXT=$(echo ${1##*.} | tr '[:upper:]' '[:lower:]')
+
+if [[ ! $FILE_EXT =~ ^(mov|mp4)$ ]]; then
+    echo "Invalid file extension \".$FILE_EXT\""
+    echo "$HELP"
+    exit 1
+fi
+
+function testFilePath {
+    if [ -f "$1/$2" ]; then
+        if [[ "$2" =~ [[:blank:]]\([0-9]+\) ]]; then
+            CURR_COUNT=$(sed -r "s/.* \(([0-9]+)\).*/\1/" <<< "$2")
+            ((CURR_COUNT+=1))
+            testFilePath "$1" "${2/ ([0-9]*)/ ($CURR_COUNT)}"
+        else
+            testFilePath "$1" "$FILE_NAME (1).$FILE_EXT"
+        fi
+    else 
+        NEW_FILE="$2"
+    fi
+}
+
+while getopts "p:" opt "${@:2}"; do
     case "$opt" in
         p)
-            SAVE_DIR=${OPTARG};;
+            SAVE_DIR="$OPTARG";;
         *)
             echo "$HELP"
             exit 1;;
     esac
 done
 
-echo "File will be saved under ${SAVE_DIR}/${1}"
-if [ $SAVE_DIR != $CURRENT_DIR ]; then
-    mkdir -p $SAVE_DIR && cd $SAVE_DIR
-fi
+NEW_FILE="$FILE_NAME.$FILE_EXT"
+
+testFilePath "$SAVE_DIR" "$NEW_FILE"
+echo "File will be saved under $SAVE_DIR/$NEW_FILE"
+
+mkdir -p "$SAVE_DIR" && cd "$SAVE_DIR"
 
 echo "Wait for recording to start... press CTRL+C to stop"
-xcrun simctl io booted recordVideo "$1"
+xcrun simctl io booted recordVideo "$NEW_FILE"
