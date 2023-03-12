@@ -11,7 +11,7 @@ HELP="Usage: $(basename $0) [FILE_NAME].[FILE_EXT] [ -p SAVE_DIR ] [ -d SIM_NAME
 "
 
 if [ -z "$1" ]; then
-	echo "$HELP"
+    echo "$HELP"
     exit 1
 fi
 
