@@ -56,7 +56,7 @@ done
 NEW_FILE="$FILE_NAME.$FILE_EXT"
 
 testFilePath "$SAVE_DIR" "$NEW_FILE"
-echo "File will be saved under $SAVE_DIR/$NEW_FILE"
+echo -e "File will be saved under \033[0;32m$SAVE_DIR/$NEW_FILE\033[0m"
 
 mkdir -p "$SAVE_DIR" && cd "$SAVE_DIR"
 
