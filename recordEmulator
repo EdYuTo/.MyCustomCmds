@@ -1,19 +1,21 @@
 #!/bin/bash
 
-HELP="Usage: $(basename $0) [FILE_NAME].[FILE_EXT] [ -p SAVE_DIR ] [ -d SIM_NAME ]
+function showHelp {
+    echo "Usage: $(basename $0) [FILE_NAME].[FILE_EXT] [ -p SAVE_DIR ] [ -d SIM_NAME ]
 
-    [FILE_NAME], filename
-    [FILE_EXT], file extension: can be either MP4 or MOV
-    [SAVE_DIR], path to save generated file, current dir if empty
-    [SIM_NAME], simulator name or UUID
+[FILE_NAME], filename
+[FILE_EXT], file extension: can be either MP4 or MOV
+[SAVE_DIR], path to save generated file, current dir if empty
+[SIM_NAME], simulator name or UUID
 
-    List of available devices and UUIDs:
+List of available devices and UUIDs:
 $(xcrun simctl list devices | sed -ne 's/^[ \t]*\(.*\) (Booted)/    * \1/p')
 "
-
-if [ -z "$1" ]; then
-    echo "$HELP"
     exit 1
+}
+
+if [[ -z "$1" || "$1" == "-h" ]]; then
+    showHelp
 fi
 
 SAVE_DIR="$PWD"
@@ -21,10 +23,9 @@ DEVICE_NAME="booted"
 FILE_NAME="${1/.*/}"
 FILE_EXT=$(echo ${1##*.} | tr '[:upper:]' '[:lower:]')
 
-if [[ ! $FILE_EXT =~ ^(mov|mp4|-h)$ ]]; then
+if [[ ! $FILE_EXT =~ ^(mov|mp4)$ ]]; then
     echo -e "\033[0;31mInvalid file extension \".$FILE_EXT\"\033[0m\n"
-    echo "$HELP"
-    exit 1
+    showHelp
 fi
 
 function testFilePath {
@@ -48,8 +49,7 @@ while getopts "p:d:h" opt "${@:2}"; do
         d)
             DEVICE_NAME="$OPTARG";;
         *)
-            echo "$HELP"
-            exit 1;;
+            showHelp;;
     esac
 done
 
@@ -61,5 +61,4 @@ echo "File will be saved under $SAVE_DIR/$NEW_FILE"
 mkdir -p "$SAVE_DIR" && cd "$SAVE_DIR"
 
 echo "Wait for recording to start... press CTRL+C to stop"
-
 xcrun simctl io "$DEVICE_NAME" recordVideo "$NEW_FILE"
