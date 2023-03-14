@@ -28,6 +28,10 @@ if [[ ! $FILE_EXT =~ ^(mov|mp4)$ ]]; then
     showHelp
 fi
 
+if [[ $FILE_EXT =~ ^mp4$ ]]; then
+    CODEC_OPT="--codec=h264"
+fi
+
 function testFilePath {
     if [ -f "$1/$2" ]; then
         if [[ "$2" =~ [[:blank:]]\([0-9]+\) ]]; then
@@ -61,4 +65,4 @@ echo -e "File will be saved under \033[0;32m$SAVE_DIR/$NEW_FILE\033[0m"
 mkdir -p "$SAVE_DIR" && cd "$SAVE_DIR"
 
 echo "Wait for recording to start... press CTRL+C to stop"
-xcrun simctl io "$DEVICE_NAME" recordVideo "$NEW_FILE"
+xcrun simctl io "$DEVICE_NAME" recordVideo "$NEW_FILE" $CODEC_OPT
