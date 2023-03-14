@@ -21,8 +21,8 @@ DEVICE_NAME="booted"
 FILE_NAME="${1/.*/}"
 FILE_EXT=$(echo ${1##*.} | tr '[:upper:]' '[:lower:]')
 
-if [[ ! $FILE_EXT =~ ^(mov|mp4)$ ]]; then
-    echo "Invalid file extension \".$FILE_EXT\""
+if [[ ! $FILE_EXT =~ ^(mov|mp4|-h)$ ]]; then
+    echo -e "\033[0;31mInvalid file extension \".$FILE_EXT\"\033[0m\n"
     echo "$HELP"
     exit 1
 fi
@@ -41,7 +41,7 @@ function testFilePath {
     fi
 }
 
-while getopts "p:d:" opt "${@:2}"; do
+while getopts "p:d:h" opt "${@:2}"; do
     case "$opt" in
         p)
             SAVE_DIR="$OPTARG";;
