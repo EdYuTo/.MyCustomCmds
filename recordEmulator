@@ -14,7 +14,7 @@ $(xcrun simctl list devices | sed -ne 's/^[ \t]*\(.*\) (Booted)/    * \1/p')
     exit 1
 }
 
-if [[ -z "$1" || "$1" == "-h" ]]; then
+if [[ -z "$1" || "$1" =~ -. ]]; then
     showHelp
 fi
 
