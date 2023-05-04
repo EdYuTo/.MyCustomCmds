@@ -9,7 +9,7 @@ function showHelp {
 [SIM_NAME], simulator name or UUID
 
 List of available devices and UUIDs:
-$(xcrun simctl list devices | sed -ne 's/^[ \t]*\(.*\) (Booted)/    * \1/p')
+$(xcrun simctl list devices | sed -ne 's/^-- iOS \(.*\) --/  iOS \1:/p' -ne 's/^[ \t]*\(.*\) (Booted)/    * \1/p')
 "
     exit 1
 }
