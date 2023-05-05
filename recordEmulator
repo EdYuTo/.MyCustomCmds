@@ -1,5 +1,15 @@
 #!/bin/bash
 
+function displaySimulators {
+    while IFS="" read -r p; do
+        if [[ "$p" =~ --\ iOS.*\ -- ]]; then
+            IOS_VERSION=$(echo $p | sed -ne 's/^-- \(.*\) --/\1/p')
+        else
+            echo $p | sed -ne 's/^[ \t]*\(.*\) (\(.*\)) (Booted)/    * \1 ('"$IOS_VERSION"', \2)/p'
+        fi
+    done <<< "$(xcrun simctl list devices)"
+}
+
 function showHelp {
     echo "Usage: $(basename $0) [FILE_NAME].[FILE_EXT] [ -p SAVE_DIR ] [ -d SIM_NAME ]
 
@@ -9,7 +19,7 @@ function showHelp {
 [SIM_NAME], simulator name or UUID
 
 List of available devices and UUIDs:
-$(xcrun simctl list devices | sed -ne 's/^-- iOS \(.*\) --/  iOS \1:/p' -ne 's/^[ \t]*\(.*\) (Booted)/    * \1/p')
+$(displaySimulators)
 "
     exit 1
 }
