@@ -1,5 +1,5 @@
 #!/bin/bash
 
-FILE_PATH=$(find . -name "*.podspec")
+FILE_PATH=$(find . -maxdepth 1 -name "*.podspec")
 FILE=$(basename -- $FILE_PATH)
 open "${FILE%.*}".xcworkspace
