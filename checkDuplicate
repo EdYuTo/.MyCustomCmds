@@ -1,32 +1,52 @@
 #!/bin/bash
 
-if [[ 
-    -z "$1" || 
-    "$1" =~ -. ||
-    -z "$2" || 
-    "$2" =~ -.
-]]; then
-    echo "Usage: $(basename $0) [FILE_NAME] [FILE_NAME] [THRESHOLD]"
-    exit -1
-fi
+function checkDup() {
+    if [[ 
+        -z "$1" || 
+        "$1" =~ -. ||
+        -z "$2" || 
+        "$2" =~ -.
+    ]]; then
+        echo "Usage: $(basename $0) [FILE_NAME] [FILE_NAME] [THRESHOLD]"
+        exit -1
+    fi
 
-THRESHOLD=${3:-80}
-TEMP1=.temp1
-TEMP2=.temp2
+    local THRESHOLD=${3:-80}
+    local TEMP1=$(mktemp)
+    local TEMP2=$(mktemp)
 
-sed '/^$/d' "$1" > $TEMP1
-sed '/^$/d' "$2" > $TEMP2
+    sed '/^$/d' "$1" > "$TEMP1"
+    sed '/^$/d' "$2" > "$TEMP2"
 
-DIFF=$(sdiff -bBs $TEMP1 $TEMP2 | wc -l)
-SIZE1=$(cat $TEMP1 | wc -l)
-SIZE2=$(cat $TEMP2 | wc -l)
-MAX_SIZE=$(( $SIZE1 > $SIZE2 ? $SIZE1 : $SIZE2 ))
-rm $TEMP1 $TEMP2
+    local DIFF=$(sdiff -bBs "$TEMP1" "$TEMP2" | wc -l)
+    local SIZE1=$(wc -l < "$TEMP1")
+    local SIZE2=$(wc -l < "$TEMP2")
+    local MAX_SIZE=$(( $SIZE1 > $SIZE2 ? $SIZE1 : $SIZE2 ))
+    rm "$TEMP1" "$TEMP2"
 
-DIFF_PERCENTAGE=$(echo "scale=2;($MAX_SIZE-$DIFF)/$MAX_SIZE" | bc | sed 's/\.//g')
+    local DIFF_PERCENTAGE=$(echo "scale=2;($MAX_SIZE-$DIFF)/$MAX_SIZE" | bc | sed 's/\.//g')
 
-if [ $DIFF_PERCENTAGE -ge $THRESHOLD ]; then
-    echo "$2 is duplicate of $1"
-else
-    echo "$2 is not duplicate of $1"
-fi
+    if [ $DIFF_PERCENTAGE -ge $THRESHOLD ]; then
+        echo $DIFF_PERCENTAGE
+    else
+        return -1
+    fi
+}
+
+FILE_EXTENSION=${1:-".swift"}
+THRESHOLD=${2:-80}
+VERIFIED_FILES=()
+
+find . -name "*$FILE_EXTENSION" -type f | while read OUTER_FILE; do
+    VERIFIED_FILES+=("$OUTER_FILE")
+    echo "Duplicates for $OUTER_FILE with more than $THRESHOLD% lines duplicated"
+    find . -name "*$FILE_EXTENSION" -type f | while read INNER_FILE; do
+        if [[ ${VERIFIED_FILES[@]} =~ "$INNER_FILE" ]]; then
+            continue
+        fi
+        DUP_PERCENTAGE=$(checkDup "$OUTER_FILE" "$INNER_FILE" $THRESHOLD)
+        if [ $? -eq 0 ]; then
+            echo "> $INNER_FILE" with $DUP_PERCENTAGE%
+        fi
+    done
+done
