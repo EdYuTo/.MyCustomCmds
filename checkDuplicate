@@ -36,16 +36,21 @@ function checkDup() {
 FILE_EXTENSION=${1:-".swift"}
 THRESHOLD=${2:-80}
 VERIFIED_FILES=()
+FILES=($(find . -name "*$FILE_EXTENSION" -type f))
 
-find . -name "*$FILE_EXTENSION" -type f | while read OUTER_FILE; do
+for OUTER_FILE in "${FILES[@]}"; do
+    if [[ ${VERIFIED_FILES[@]} =~ "$OUTER_FILE" ]]; then
+        continue
+    fi
     VERIFIED_FILES+=("$OUTER_FILE")
     echo "Duplicates for $OUTER_FILE with more than $THRESHOLD% lines duplicated"
-    find . -name "*$FILE_EXTENSION" -type f | while read INNER_FILE; do
+    for INNER_FILE in "${FILES[@]}"; do
         if [[ ${VERIFIED_FILES[@]} =~ "$INNER_FILE" ]]; then
             continue
         fi
         DUP_PERCENTAGE=$(checkDup "$OUTER_FILE" "$INNER_FILE" $THRESHOLD)
         if [ $? -eq 0 ]; then
+            VERIFIED_FILES+=("$INNER_FILE")
             echo "> $INNER_FILE" with $DUP_PERCENTAGE%
         fi
     done
