@@ -25,7 +25,7 @@ rm $TEMP1 $TEMP2
 
 DIFF_PERCENTAGE=$(echo "scale=2;($MAX_SIZE-$DIFF)/$MAX_SIZE" | bc | sed 's/\.//g')
 
-if [ $DIFF_PERCENTAGE -gt $THRESHOLD ]; then
+if [ $DIFF_PERCENTAGE -ge $THRESHOLD ]; then
     echo "$2 is duplicate of $1"
 else
     echo "$2 is not duplicate of $1"
