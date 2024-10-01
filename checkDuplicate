@@ -12,8 +12,6 @@ function checkDup() {
     fi
 
     local THRESHOLD=${3:-80}
-    local TEMP1=$(mktemp)
-    local TEMP2=$(mktemp)
 
     sed '/^$/d' "$1" > "$TEMP1"
     sed '/^$/d' "$2" > "$TEMP2"
@@ -22,7 +20,6 @@ function checkDup() {
     local SIZE1=$(wc -l < "$TEMP1")
     local SIZE2=$(wc -l < "$TEMP2")
     local MAX_SIZE=$(( $SIZE1 > $SIZE2 ? $SIZE1 : $SIZE2 ))
-    rm "$TEMP1" "$TEMP2"
 
     local DIFF_PERCENTAGE=$(echo "scale=2;($MAX_SIZE-$DIFF)/$MAX_SIZE" | bc | sed 's/\.//g')
 
@@ -33,10 +30,12 @@ function checkDup() {
     fi
 }
 
-FILE_EXTENSION=${1:-".swift"}
-THRESHOLD=${2:-80}
-VERIFIED_FILES=()
-FILES=($(find . -name "*$FILE_EXTENSION" -type f))
+local FILE_EXTENSION=${1:-".swift"}
+local THRESHOLD=${2:-80}
+local VERIFIED_FILES=()
+local FILES=($(find . -name "*$FILE_EXTENSION" -type f))
+local TEMP1="$(mktemp)"
+local TEMP2="$(mktemp)"
 
 for OUTER_FILE in "${FILES[@]}"; do
     if [[ ${VERIFIED_FILES[@]} =~ "$OUTER_FILE" ]]; then
@@ -55,3 +54,6 @@ for OUTER_FILE in "${FILES[@]}"; do
         fi
     done
 done
+
+rm "$TEMP1" "$TEMP2"
+
