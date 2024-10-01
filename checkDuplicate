@@ -30,12 +30,12 @@ function checkDup() {
     fi
 }
 
-local FILE_EXTENSION=${1:-".swift"}
-local THRESHOLD=${2:-80}
-local VERIFIED_FILES=()
-local FILES=($(find . -name "*$FILE_EXTENSION" -type f))
-local TEMP1="$(mktemp)"
-local TEMP2="$(mktemp)"
+FILE_EXTENSION=${1:-".swift"}
+THRESHOLD=${2:-80}
+VERIFIED_FILES=()
+FILES=($(find . -name "*$FILE_EXTENSION" -type f))
+TEMP1="$(mktemp)"
+TEMP2="$(mktemp)"
 
 for OUTER_FILE in "${FILES[@]}"; do
     if [[ ${VERIFIED_FILES[@]} =~ "$OUTER_FILE" ]]; then
